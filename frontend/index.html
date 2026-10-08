@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="km" dir="ltr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no" />
+
+    <!-- =====================================================================
+         Telegram Mini App — Required Script (MUST be first in <head>)
+    ====================================================================== -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+    <!-- =====================================================================
+         Primary Meta Tags
+    ====================================================================== -->
+    <title>អាធិរាជរឿង | Athireach Roeung</title>
+    <meta name="title" content="អាធិរាជរឿង | Athireach Roeung" />
+    <meta name="description" content="វេទិការស្ទ្រីមរឿងខ្មែរ — The King of Stories. Watch premium Khmer cinema directly in Telegram." />
+    <meta name="author" content="Athireach Roeung Team" />
+    <meta name="keywords" content="khmer movie, រឿងខ្មែរ, telegram mini app, streaming, cinema" />
+    <meta name="theme-color" content="#0a0a0f" />
+    <meta name="color-scheme" content="dark" />
+
+    <!-- =====================================================================
+         Open Graph / Facebook
+    ====================================================================== -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="អាធិរាជរឿង | Athireach Roeung" />
+    <meta property="og:description" content="វេទិការស្ទ្រីមរឿងខ្មែរ — The King of Stories." />
+    <meta property="og:image" content="/og-image.jpg" />
+
+    <!-- =====================================================================
+         Twitter Card
+    ====================================================================== -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="អាធិរាជរឿង | Athireach Roeung" />
+    <meta name="twitter:description" content="វេទិការស្ទ្រីមរឿងខ្មែរ — The King of Stories." />
+    <meta name="twitter:image" content="/og-image.jpg" />
+
+    <!-- =====================================================================
+         PWA / Mobile
+    ====================================================================== -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.json" />
+
+    <!-- =====================================================================
+         Google Fonts — Khmer + Latin Display
+    ====================================================================== -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Serif+Khmer:wght@300;400;500;600;700;800;900&family=Noto+Sans+Khmer:wght@300;400;500;600;700&family=Battambang:wght@300;400;700&family=Hanuman:wght@400;700&family=Inter:wght@300;400;500;600;700;800&family=Cinzel:wght@400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- =====================================================================
+         Critical CSS — Prevent FOUC on Telegram
+    ====================================================================== -->
+    <style>
+      /* Reset & base */
+      *, *::before, *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      :root {
+        /* Cinema color tokens */
+        --cinema-bg:        #0a0a0f;
+        --cinema-secondary: #12121a;
+        --cinema-card:      #1a1a24;
+        --cinema-elevated:  #22222e;
+        --cinema-border:    #2a2a3a;
+        --gold-primary:     #d4af37;
+        --gold-bright:      #f5c842;
+        --text-primary:     #f0e6c8;
+        --text-secondary:   #b8a882;
+        --text-muted:       #6b6282;
+
+        /* Telegram viewport */
+        --tg-viewport-height: 100vh;
+        --tg-viewport-stable-height: 100vh;
+      }
+
+      html {
+        font-size: 16px;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-rendering: optimizeLegibility;
+      }
+
+      body {
+        background-color: var(--cinema-bg);
+        color: var(--text-primary);
+        font-family: 'Noto Serif Khmer', 'Noto Sans Khmer', 'Inter', sans-serif;
+        line-height: 1.7;
+        min-height: 100vh;
+        min-height: var(--tg-viewport-stable-height, 100vh);
+        overflow-x: hidden;
+        /* Telegram dark mode */
+        color-scheme: dark;
+      }
+
+      /* Selection color */
+      ::selection {
+        background-color: rgba(212, 175, 55, 0.3);
+        color: var(--gold-bright);
+      }
+
+      /* Scrollbar — dark themed */
+      ::-webkit-scrollbar {
+        width: 4px;
+        height: 4px;
+      }
+      ::-webkit-scrollbar-track {
+        background: var(--cinema-secondary);
+      }
+      ::-webkit-scrollbar-thumb {
+        background: rgba(212, 175, 55, 0.3);
+        border-radius: 2px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: rgba(212, 175, 55, 0.6);
+      }
+
+      /* Root mounting point */
+      #root {
+        min-height: 100vh;
+        min-height: var(--tg-viewport-stable-height, 100vh);
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* Full-page loading splash (shown before React mounts) */
+      #root:empty::before {
+        content: '';
+        position: fixed;
+        inset: 0;
+        background-color: var(--cinema-bg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+      }
+
+      /* Loading indicator */
+      .initial-loader {
+        position: fixed;
+        inset: 0;
+        background: var(--cinema-bg);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        gap: 1.5rem;
+      }
+
+      .initial-loader__logo {
+        font-family: 'Noto Serif Khmer', serif;
+        font-size: 1.75rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, #d4af37 0%, #f5c842 50%, #d4af37 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        animation: loader-pulse 1.5s ease-in-out infinite;
+      }
+
+      .initial-loader__spinner {
+        width: 40px;
+        height: 40px;
+        border: 3px solid rgba(212, 175, 55, 0.15);
+        border-top-color: #d4af37;
+        border-radius: 50%;
+        animation: loader-spin 0.8s linear infinite;
+      }
+
+      @keyframes loader-spin {
+        to { transform: rotate(360deg); }
+      }
+
+      @keyframes loader-pulse {
+        0%, 100% { opacity: 1; }
+        50%       { opacity: 0.6; }
+      }
+
+      /* Disable rubber-band scroll on iOS inside Telegram */
+      body {
+        overscroll-behavior: none;
+      }
+
+      /* Tap highlight color */
+      * {
+        -webkit-tap-highlight-color: rgba(212, 175, 55, 0.1);
+      }
+
+      /* Focus visible — accessibility */
+      :focus-visible {
+        outline: 2px solid var(--gold-primary);
+        outline-offset: 2px;
+        border-radius: 4px;
+      }
+
+      /* Input autofill dark theme */
+      input:-webkit-autofill,
+      input:-webkit-autofill:hover,
+      input:-webkit-autofill:focus {
+        -webkit-text-fill-color: var(--text-primary);
+        -webkit-box-shadow: 0 0 0px 1000px var(--cinema-card) inset;
+        transition: background-color 5000s ease-in-out 0s;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Initial loading splash — hidden once React mounts -->
+    <div class="initial-loader" id="initial-loader">
+      <div class="initial-loader__logo">អាធិរាជរឿង</div>
+      <div class="initial-loader__spinner"></div>
+    </div>
+
+    <!-- React app root -->
+    <div id="root"></div>
+
+    <!-- =====================================================================
+         Telegram WebApp initialization helper
+    ====================================================================== -->
+    <script>
+      // Initialize Telegram WebApp as early as possible
+      if (window.Telegram && window.Telegram.WebApp) {
+        const tg = window.Telegram.WebApp;
+
+        // Signal app is ready
+        tg.ready();
+
+        // Expand to full viewport
+        tg.expand();
+
+        // Set header/background color to match cinema theme
+        tg.setHeaderColor('#0a0a0f');
+        tg.setBackgroundColor('#0a0a0f');
+
+        // Enable closing confirmation for safety
+        tg.enableClosingConfirmation();
+
+        // Apply Telegram color scheme
+        document.documentElement.style.setProperty(
+          '--tg-theme-bg-color',
+          tg.themeParams.bg_color || '#0a0a0f'
+        );
+      }
+
+      // Hide initial loader once React has mounted
+      window.__hideLoader = function() {
+        const loader = document.getElementById('initial-loader');
+        if (loader) {
+          loader.style.transition = 'opacity 0.4s ease';
+          loader.style.opacity = '0';
+          setTimeout(() => loader.remove(), 400);
+        }
+      };
+    </script>
+
+    <!-- React entry point -->
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

@@ -1,0 +1,61 @@
+﻿src/admin/admin-auth.service.ts(8,31): error TS2307: Cannot find module '../../prisma/prisma.service' or its corresponding type declarations.
+src/admin/admin-auth.service.ts(9,31): error TS2307: Cannot find module '../dto/admin-auth.dto' or its corresponding type declarations.
+src/admin/admin-auth.service.ts(10,33): error TS2307: Cannot find module '../../auth/auth.dto' or its corresponding type declarations.
+src/admin/admin-categories.service.ts(6,31): error TS2307: Cannot find module '../../prisma/prisma.service' or its corresponding type declarations.
+src/admin/admin-categories.service.ts(7,54): error TS2307: Cannot find module '../dto/admin-misc.dto' or its corresponding type declarations.
+src/admin/admin-dashboard.service.ts(2,31): error TS2307: Cannot find module '../../prisma/prisma.service' or its corresponding type declarations.
+src/admin/admin-deposits.service.ts(8,31): error TS2307: Cannot find module '../../prisma/prisma.service' or its corresponding type declarations.
+src/admin/admin-deposits.service.ts(9,38): error TS2307: Cannot find module '../../notifications/notifications.service' or its corresponding type declarations.
+src/admin/admin-deposits.service.ts(10,30): error TS2307: Cannot find module '../../audit/audit.service' or its corresponding type declarations.
+src/admin/admin-deposits.service.ts(11,72): error TS2307: Cannot find module '../dto/admin-users.dto' or its corresponding type declarations.
+src/admin/admin-deposits.service.ts(59,44): error TS7006: Parameter 'tx' implicitly has an 'any' type.
+src/admin/admin-deposits.service.ts(123,17): error TS7006: Parameter 'err' implicitly has an 'any' type.
+src/admin/admin-deposits.service.ts(159,15): error TS7006: Parameter 'err' implicitly has an 'any' type.
+src/admin/admin-movies.service.ts(8,31): error TS2307: Cannot find module '../../prisma/prisma.service' or its corresponding type declarations.
+src/admin/admin-movies.service.ts(9,32): error TS2307: Cannot find module '../../storage/storage.service' or its corresponding type declarations.
+src/admin/admin-movies.service.ts(16,8): error TS2307: Cannot find module '../dto/admin-movies.dto' or its corresponding type declarations.
+src/admin/admin-movies.service.ts(86,37): error TS7006: Parameter 'tagId' implicitly has an 'any' type.
+src/admin/admin-movies.service.ts(119,37): error TS7006: Parameter 'tagId' implicitly has an 'any' type.
+src/admin/admin-movies.service.ts(136,71): error TS7006: Parameter 'err' implicitly has an 'any' type.
+src/admin/admin-movies.service.ts(244,71): error TS7006: Parameter 'err' implicitly has an 'any' type.
+src/admin/admin-promotions.service.ts(6,31): error TS2307: Cannot find module '../../prisma/prisma.service' or its corresponding type declarations.
+src/admin/admin-promotions.service.ts(7,53): error TS2307: Cannot find module '../dto/admin-misc.dto' or its corresponding type declarations.
+src/admin/admin-settings.service.ts(2,31): error TS2307: Cannot find module '../../prisma/prisma.service' or its corresponding type declarations.
+src/admin/admin-settings.service.ts(15,8): error TS7006: Parameter 'acc' implicitly has an 'any' type.
+src/admin/admin-settings.service.ts(15,13): error TS7006: Parameter 'setting' implicitly has an 'any' type.
+src/admin/admin-users.service.ts(7,31): error TS2307: Cannot find module '../../prisma/prisma.service' or its corresponding type declarations.
+src/admin/admin-users.service.ts(8,30): error TS2307: Cannot find module '../../audit/audit.service' or its corresponding type declarations.
+src/admin/admin-users.service.ts(9,38): error TS2307: Cannot find module '../../notifications/notifications.service' or its corresponding type declarations.
+src/admin/admin-users.service.ts(10,69): error TS2307: Cannot find module '../dto/admin-users.dto' or its corresponding type declarations.
+src/admin/admin-users.service.ts(113,44): error TS7006: Parameter 'tx' implicitly has an 'any' type.
+src/admin/admin-users.service.ts(161,44): error TS7006: Parameter 'tx' implicitly has an 'any' type.
+src/audit/audit.service.ts(27,11): error TS2322: Type 'string | null' is not assignable to type 'InputJsonValue | NullableJsonNullValueInput | undefined'.
+  Type 'null' is not assignable to type 'InputJsonValue | NullableJsonNullValueInput | undefined'.
+src/audit/audit.service.ts(28,11): error TS2322: Type 'string | null' is not assignable to type 'InputJsonValue | NullableJsonNullValueInput | undefined'.
+  Type 'null' is not assignable to type 'InputJsonValue | NullableJsonNullValueInput | undefined'.
+src/audit/audit.service.ts(65,9): error TS2322: Type '{ entityId?: string | undefined; entity?: string | undefined; action?: { contains: string; mode: string; } | undefined; adminId?: string | undefined; }' is not assignable to type 'AuditLogWhereInput'.
+  Types of property 'action' are incompatible.
+    Type '{ contains: string; mode: string; } | undefined' is not assignable to type 'string | StringFilter<"AuditLog"> | undefined'.
+      Type '{ contains: string; mode: string; }' is not assignable to type 'string | StringFilter<"AuditLog"> | undefined'.
+        Type '{ contains: string; mode: string; }' is not assignable to type 'StringFilter<"AuditLog">'.
+          Types of property 'mode' are incompatible.
+            Type 'string' is not assignable to type 'QueryMode | undefined'.
+src/audit/audit.service.ts(75,36): error TS2322: Type '{ entityId?: string | undefined; entity?: string | undefined; action?: { contains: string; mode: string; } | undefined; adminId?: string | undefined; }' is not assignable to type 'AuditLogWhereInput'.
+  Types of property 'action' are incompatible.
+    Type '{ contains: string; mode: string; } | undefined' is not assignable to type 'string | StringFilter<"AuditLog"> | undefined'.
+      Type '{ contains: string; mode: string; }' is not assignable to type 'string | StringFilter<"AuditLog"> | undefined'.
+        Type '{ contains: string; mode: string; }' is not assignable to type 'StringFilter<"AuditLog">'.
+          Types of property 'mode' are incompatible.
+            Type 'string' is not assignable to type 'QueryMode | undefined'.
+src/categories/categories.service.ts(17,9): error TS2353: Object literal may only specify known properties, and 'iconUrl' does not exist in type 'CategorySelect<DefaultArgs>'.
+src/main.ts(15,11): error TS2349: This expression is not callable.
+  Type 'typeof compression' has no call signatures.
+src/notifications/notifications.service.ts(60,9): error TS2322: Type 'string | null' is not assignable to type 'InputJsonValue | NullableJsonNullValueInput | undefined'.
+  Type 'null' is not assignable to type 'InputJsonValue | NullableJsonNullValueInput | undefined'.
+src/notifications/notifications.service.ts(102,29): error TS2353: Object literal may only specify known properties, and 'readAt' does not exist in type '(Without<NotificationUpdateManyMutationInput, NotificationUncheckedUpdateManyInput> & NotificationUncheckedUpdateManyInput) | (Without<...> & NotificationUpdateManyMutationInput)'.
+src/notifications/notifications.service.ts(109,29): error TS2353: Object literal may only specify known properties, and 'readAt' does not exist in type '(Without<NotificationUpdateManyMutationInput, NotificationUncheckedUpdateManyInput> & NotificationUncheckedUpdateManyInput) | (Without<...> & NotificationUpdateManyMutationInput)'.
+src/users/users.service.ts(20,5): error TS2322: Type '{ wallet: { id: string; createdAt: Date; updatedAt: Date; balance: Decimal; frozenBalance: Decimal; totalDeposited: Decimal; totalSpent: Decimal; currency: string; userId: string; } | null; } & { ...; }' is not assignable to type '{ id: string; createdAt: Date; updatedAt: Date; username: string | null; telegramId: string; firstName: string; lastName: string | null; photoUrl: string | null; languageCode: string | null; isPremium: boolean; status: UserStatus; preferences: JsonValue; lastActiveAt: Date | null; } & { ...; }'.
+  Type '{ wallet: { id: string; createdAt: Date; updatedAt: Date; balance: Decimal; frozenBalance: Decimal; totalDeposited: Decimal; totalSpent: Decimal; currency: string; userId: string; } | null; } & { ...; }' is not assignable to type '{ wallet?: object | undefined; }'.
+    Types of property 'wallet' are incompatible.
+      Type '{ id: string; createdAt: Date; updatedAt: Date; balance: Decimal; frozenBalance: Decimal; totalDeposited: Decimal; totalSpent: Decimal; currency: string; userId: string; } | null' is not assignable to type 'object | undefined'.
+        Type 'null' is not assignable to type 'object | undefined'.
