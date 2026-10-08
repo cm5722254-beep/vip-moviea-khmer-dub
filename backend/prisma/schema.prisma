@@ -1,0 +1,708 @@
+// អាធិរាជរឿង - Prisma Schema
+// Generator & Datasource
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─────────────────────────────────────────────
+// USERS (Telegram users)
+// ─────────────────────────────────────────────
+
+model User {
+  id           String     @id @default(uuid())
+  telegramId   String     @unique
+  username     String?
+  firstName    String
+  lastName     String?
+  photoUrl     String?
+  languageCode String?    @default("km")
+  isPremium    Boolean    @default(false)
+  status       UserStatus @default(ACTIVE)
+  preferences  Json?
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  lastActiveAt DateTime?
+
+  wallet        Wallet?
+  purchases     Purchase[]
+  watchProgress WatchProgress[]
+  watchHistory  WatchHistory[]
+  favorites     Favorite[]
+  couponUsages  CouponUsage[]
+  notifications Notification[]
+  deposits      Deposit[]
+
+  @@index([telegramId])
+  @@index([status])
+  @@map("users")
+}
+
+enum UserStatus {
+  ACTIVE
+  SUSPENDED
+  BANNED
+}
+
+// ─────────────────────────────────────────────
+// ADMINS (separate from Telegram users)
+// ─────────────────────────────────────────────
+
+model Admin {
+  id           String    @id @default(uuid())
+  username     String    @unique
+  email        String    @unique
+  passwordHash String
+  firstName    String?
+  lastName     String?
+  role         AdminRole @default(MODERATOR)
+  isActive     Boolean   @default(true)
+  lastLoginAt  DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  auditLogs AuditLog[]
+
+  @@index([username])
+  @@index([email])
+  @@map("admins")
+}
+
+enum AdminRole {
+  SUPER_ADMIN
+  ADMIN
+  MODERATOR
+}
+
+// ─────────────────────────────────────────────
+// CATEGORIES
+// ─────────────────────────────────────────────
+
+model Category {
+  id        String   @id @default(uuid())
+  nameKh    String
+  nameEn    String?
+  slug      String   @unique
+  icon      String?
+  iconUrl   String?
+  sortOrder Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  movies Movie[]
+
+  @@index([slug])
+  @@index([isActive, sortOrder])
+  @@map("categories")
+}
+
+// ─────────────────────────────────────────────
+// MOVIES
+// ─────────────────────────────────────────────
+
+model Movie {
+  id            String      @id @default(uuid())
+  titleKh       String
+  titleEn       String?
+  descriptionKh String?
+  descriptionEn String?
+  posterUrl     String?
+  bannerUrl     String?
+  trailerUrl    String?
+  releaseYear   Int?
+  duration      Int?
+  totalEpisodes Int         @default(1)
+  viewCount     Int         @default(0)
+  likeCount     Int         @default(0)
+  rating        Decimal?    @db.Decimal(3, 1)
+  price         Decimal     @default(0) @db.Decimal(10, 2)
+  episodePrice  Decimal     @default(0) @db.Decimal(10, 2)
+  isFree        Boolean     @default(false)
+  status        MovieStatus @default(DRAFT)
+  isPopular     Boolean     @default(false)
+  isFeatured    Boolean     @default(false)
+  isNew         Boolean     @default(true)
+  isHot         Boolean     @default(false)
+  ageRating     String?     @default("G")
+  licenseInfo   String?
+  territoryCode String?     @default("KH")
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  publishedAt   DateTime?
+
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id])
+
+  episodes      Episode[]
+  purchaseItems PurchaseItem[]
+  watchProgress WatchProgress[]
+  watchHistory  WatchHistory[]
+  favorites     Favorite[]
+  tags          MovieTag[]
+  videoAssets   VideoAsset[]
+
+  @@index([categoryId])
+  @@index([status])
+  @@index([isFeatured])
+  @@index([isPopular])
+  @@index([isNew])
+  @@index([publishedAt])
+  @@map("movies")
+}
+
+enum MovieStatus {
+  DRAFT
+  PUBLISHED
+  UNPUBLISHED
+  DELETED
+}
+
+// ─────────────────────────────────────────────
+// TAGS
+// ─────────────────────────────────────────────
+
+model Tag {
+  id     String  @id @default(uuid())
+  nameKh String
+  nameEn String?
+  slug   String  @unique
+
+  movies MovieTag[]
+
+  @@index([slug])
+  @@map("tags")
+}
+
+model MovieTag {
+  movieId String
+  tagId   String
+
+  movie Movie @relation(fields: [movieId], references: [id], onDelete: Cascade)
+  tag   Tag   @relation(fields: [tagId], references: [id])
+
+  @@id([movieId, tagId])
+  @@map("movie_tags")
+}
+
+// ─────────────────────────────────────────────
+// EPISODES
+// ─────────────────────────────────────────────
+
+model Episode {
+  id            String    @id @default(uuid())
+  movieId       String
+  episodeNumber Int
+  titleKh       String?
+  titleEn       String?
+  description   String?
+  thumbnailUrl  String?
+  duration      Int?      @default(0)
+  price         Decimal   @default(0) @db.Decimal(10, 2)
+  isFree        Boolean   @default(false)
+  isPublished   Boolean   @default(false)
+  airDate       DateTime?
+  viewCount     Int       @default(0)
+  sortOrder     Int       @default(0)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  movie Movie @relation(fields: [movieId], references: [id], onDelete: Cascade)
+
+  videoAssets   VideoAsset[]
+  subtitles     Subtitle[]
+  purchaseItems PurchaseItem[]
+  watchProgress WatchProgress[]
+  watchHistory  WatchHistory[]
+
+  @@unique([movieId, episodeNumber])
+  @@index([movieId])
+  @@index([isPublished])
+  @@map("episodes")
+}
+
+// ─────────────────────────────────────────────
+// VIDEO ASSETS
+// ─────────────────────────────────────────────
+
+model VideoAsset {
+  id         String       @id @default(uuid())
+  movieId    String?
+  episodeId  String?
+  quality    VideoQuality @default(HD)
+  storageKey String
+  fileSize   BigInt?
+  mimeType   String       @default("video/mp4")
+  isActive   Boolean      @default(true)
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @default(now()) @updatedAt
+
+  episode Episode? @relation(fields: [episodeId], references: [id], onDelete: Cascade)
+  movie   Movie?   @relation(fields: [movieId], references: [id], onDelete: Cascade)
+
+  @@unique([episodeId, quality])
+  @@index([episodeId])
+  @@index([movieId])
+  @@index([quality])
+  @@map("video_assets")
+}
+
+enum VideoQuality {
+  SD
+  HD
+  FHD
+  UHD
+  SD_480P
+  HD_720P
+  FHD_1080P
+  UHD_4K
+}
+
+// ─────────────────────────────────────────────
+// SUBTITLES
+// ─────────────────────────────────────────────
+
+model Subtitle {
+  id         String  @id @default(uuid())
+  episodeId  String
+  language   String  @default("km")
+  label      String
+  storageKey String
+  isDefault  Boolean @default(false)
+
+  episode Episode @relation(fields: [episodeId], references: [id], onDelete: Cascade)
+
+  @@index([episodeId])
+  @@map("subtitles")
+}
+
+// ─────────────────────────────────────────────
+// WALLET
+// ─────────────────────────────────────────────
+
+model Wallet {
+  id             String   @id @default(uuid())
+  userId         String   @unique
+  balance        Decimal  @default(0) @db.Decimal(12, 2)
+  frozenBalance  Decimal  @default(0) @db.Decimal(12, 2)
+  totalDeposited Decimal  @default(0) @db.Decimal(12, 2)
+  totalSpent     Decimal  @default(0) @db.Decimal(12, 2)
+  currency       String   @default("USD")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  user         User                @relation(fields: [userId], references: [id])
+  transactions WalletTransaction[]
+  deposits     Deposit[]
+
+  @@map("wallets")
+}
+
+// ─────────────────────────────────────────────
+// WALLET TRANSACTIONS
+// ─────────────────────────────────────────────
+
+model WalletTransaction {
+  id            String            @id @default(uuid())
+  walletId      String
+  type          TransactionType
+  amount        Decimal           @db.Decimal(12, 2)
+  balanceBefore Decimal           @db.Decimal(12, 2)
+  balanceAfter  Decimal           @db.Decimal(12, 2)
+  description   String?
+  descriptionKh String?
+  referenceId   String?
+  referenceType String?
+  status        TransactionStatus @default(COMPLETED)
+  createdAt     DateTime          @default(now())
+
+  wallet Wallet @relation(fields: [walletId], references: [id])
+
+  @@index([walletId])
+  @@index([createdAt])
+  @@index([type])
+  @@index([status])
+  @@map("wallet_transactions")
+}
+
+enum TransactionType {
+  DEPOSIT
+  PURCHASE
+  REFUND
+  ADMIN_CREDIT
+  ADMIN_DEBIT
+}
+
+enum TransactionStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+// ─────────────────────────────────────────────
+// PAYMENT METHODS
+// ─────────────────────────────────────────────
+
+model PaymentMethod {
+  id          String      @id @default(uuid())
+  name        String
+  nameKh      String
+  nameEn      String?
+  code        String      @unique
+  type        PaymentType
+  config      Json        @default("{}")
+  accountInfo String?
+  qrCodeUrl   String?
+  isActive    Boolean     @default(false)
+  sortOrder   Int         @default(0)
+  minAmount   Decimal     @default(1) @db.Decimal(10, 2)
+  maxAmount   Decimal     @default(1000) @db.Decimal(10, 2)
+
+  deposits Deposit[]
+
+  @@index([isActive])
+  @@map("payment_methods")
+}
+
+enum PaymentType {
+  TELEGRAM_PAYMENT
+  QR_CODE
+  BANK_TRANSFER
+  MANUAL
+  STRIPE
+  PAYPAL
+}
+
+// ─────────────────────────────────────────────
+// DEPOSITS
+// ─────────────────────────────────────────────
+
+model Deposit {
+  id              String        @id @default(uuid())
+  userId          String
+  walletId        String?
+  paymentMethodId String
+  amount          Decimal       @db.Decimal(10, 2)
+  fee             Decimal       @default(0) @db.Decimal(10, 2)
+  netAmount       Decimal       @default(0) @db.Decimal(10, 2)
+  currency        String        @default("USD")
+  reference       String        @unique
+  status          DepositStatus @default(PENDING)
+  providerRef     String?
+  proofUrl        String?
+  proofImageKey   String?
+  note            String?
+  adminNote       String?
+  rejectionReason String?
+  approvedBy      String?
+  approvedAt      DateTime?
+  rejectedBy      String?
+  rejectedAt      DateTime?
+  expiresAt       DateTime?
+  metadata        Json?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  user          User          @relation(fields: [userId], references: [id])
+  paymentMethod PaymentMethod @relation(fields: [paymentMethodId], references: [id])
+  wallet        Wallet?       @relation(fields: [walletId], references: [id])
+
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt])
+  @@map("deposits")
+}
+
+enum DepositStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  PROCESSING
+  COMPLETED
+  FAILED
+  CANCELLED
+  EXPIRED
+}
+
+// ─────────────────────────────────────────────
+// PURCHASES
+// ─────────────────────────────────────────────
+
+model Purchase {
+  id             String         @id @default(uuid())
+  userId         String
+  couponId       String?
+  totalAmount    Decimal        @db.Decimal(10, 2)
+  discountAmount Decimal        @default(0) @db.Decimal(10, 2)
+  finalAmount    Decimal        @default(0) @db.Decimal(10, 2)
+  status         PurchaseStatus @default(COMPLETED)
+  couponCode     String?
+  transactionRef String?
+  createdAt      DateTime       @default(now())
+
+  user   User           @relation(fields: [userId], references: [id])
+  coupon Coupon?        @relation(fields: [couponId], references: [id])
+  items  PurchaseItem[]
+
+  @@index([userId])
+  @@index([status])
+  @@map("purchases")
+}
+
+enum PurchaseType {
+  MOVIE
+  EPISODE
+}
+
+enum PurchaseStatus {
+  PENDING
+  COMPLETED
+  REFUNDED
+  FAILED
+}
+
+// ─────────────────────────────────────────────
+// PURCHASE ITEMS
+// ─────────────────────────────────────────────
+
+model PurchaseItem {
+  id         String       @id @default(uuid())
+  purchaseId String
+  movieId    String
+  episodeId  String?
+  type       PurchaseType @default(MOVIE)
+  price      Decimal      @db.Decimal(10, 2)
+
+  purchase Purchase @relation(fields: [purchaseId], references: [id], onDelete: Cascade)
+  movie    Movie    @relation(fields: [movieId], references: [id])
+  episode  Episode? @relation(fields: [episodeId], references: [id])
+
+  @@index([purchaseId])
+  @@index([movieId])
+  @@index([episodeId])
+  @@map("purchase_items")
+}
+
+// ─────────────────────────────────────────────
+// WATCH PROGRESS
+// ─────────────────────────────────────────────
+
+model WatchProgress {
+  id              String   @id @default(uuid())
+  userId          String
+  movieId         String
+  episodeId       String
+  progressSeconds Int      @default(0)
+  durationSeconds Int      @default(0)
+  percentage      Int      @default(0)
+  isCompleted     Boolean  @default(false)
+  lastWatchedAt   DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user    User    @relation(fields: [userId], references: [id])
+  movie   Movie   @relation(fields: [movieId], references: [id])
+  episode Episode @relation(fields: [episodeId], references: [id])
+
+  @@unique([userId, episodeId])
+  @@index([userId])
+  @@index([movieId])
+  @@map("watch_progress")
+}
+
+// ─────────────────────────────────────────────
+// WATCH HISTORY
+// ─────────────────────────────────────────────
+
+model WatchHistory {
+  id        String   @id @default(uuid())
+  userId    String
+  movieId   String
+  episodeId String?
+  watchedAt DateTime @default(now())
+
+  user    User     @relation(fields: [userId], references: [id])
+  movie   Movie    @relation(fields: [movieId], references: [id])
+  episode Episode? @relation(fields: [episodeId], references: [id])
+
+  @@unique([userId, movieId])
+  @@index([userId])
+  @@index([movieId])
+  @@index([watchedAt])
+  @@map("watch_history")
+}
+
+// ─────────────────────────────────────────────
+// FAVORITES
+// ─────────────────────────────────────────────
+
+model Favorite {
+  userId    String
+  movieId   String
+  createdAt DateTime @default(now())
+
+  user  User  @relation(fields: [userId], references: [id])
+  movie Movie @relation(fields: [movieId], references: [id])
+
+  @@id([userId, movieId])
+  @@index([userId])
+  @@map("favorites")
+}
+
+// ─────────────────────────────────────────────
+// PROMOTIONS
+// ─────────────────────────────────────────────
+
+model Promotion {
+  id            String        @id @default(uuid())
+  nameKh        String
+  nameEn        String?
+  type          PromotionType
+  discountType  DiscountType
+  discountValue     Decimal       @db.Decimal(10, 2)
+  maxDiscount       Decimal?      @db.Decimal(10, 2)
+  minPurchaseAmount Decimal?      @db.Decimal(10, 2)
+  startDate         DateTime
+  endDate           DateTime
+  isActive      Boolean       @default(true)
+  createdAt     DateTime      @default(now())
+
+  coupons Coupon[]
+
+  @@index([isActive])
+  @@index([startDate, endDate])
+  @@map("promotions")
+}
+
+enum PromotionType {
+  MOVIE_DISCOUNT
+  EPISODE_DISCOUNT
+  DEPOSIT_BONUS
+  FREE_MOVIE
+}
+
+enum DiscountType {
+  PERCENTAGE
+  FIXED_AMOUNT
+}
+
+// ─────────────────────────────────────────────
+// COUPONS
+// ─────────────────────────────────────────────
+
+model Coupon {
+  id                String       @id @default(uuid())
+  promotionId       String?
+  code              String       @unique
+  descriptionKh     String?
+  discountType      DiscountType
+  discountValue     Decimal      @db.Decimal(10, 2)
+  minPurchaseAmount Decimal      @default(0) @db.Decimal(10, 2)
+  maxDiscount       Decimal?     @db.Decimal(10, 2)
+  maxUses           Int?
+  usedCount         Int          @default(0)
+  startDate         DateTime     @default(now())
+  expiresAt         DateTime?
+  endDate           DateTime?
+  isActive          Boolean      @default(true)
+  createdAt         DateTime     @default(now())
+
+  promotion Promotion?    @relation(fields: [promotionId], references: [id])
+  usages    CouponUsage[]
+  purchases Purchase[]
+
+  @@index([code])
+  @@index([isActive])
+  @@map("coupons")
+}
+
+model CouponUsage {
+  id         String   @id @default(uuid())
+  couponId   String
+  userId     String
+  purchaseId String?
+  usedAt     DateTime @default(now())
+
+  coupon Coupon @relation(fields: [couponId], references: [id])
+  user   User   @relation(fields: [userId], references: [id])
+
+  @@unique([couponId, userId])
+  @@map("coupon_usages")
+}
+
+// ─────────────────────────────────────────────
+// NOTIFICATIONS
+// ─────────────────────────────────────────────
+
+model Notification {
+  id        String           @id @default(uuid())
+  userId    String
+  type      NotificationType
+  titleKh   String
+  bodyKh    String?
+  isRead    Boolean          @default(false)
+  readAt    DateTime?
+  data      Json?
+  createdAt DateTime         @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId, isRead])
+  @@index([createdAt])
+  @@map("notifications")
+}
+
+enum NotificationType {
+  DEPOSIT_SUCCESS
+  DEPOSIT_FAILED
+  DEPOSIT_APPROVED
+  DEPOSIT_REJECTED
+  PURCHASE_SUCCESS
+  NEW_EPISODE
+  PROMOTION
+  SYSTEM
+}
+
+// ─────────────────────────────────────────────
+// AUDIT LOGS
+// ─────────────────────────────────────────────
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  adminId   String
+  action    String
+  entity    String
+  entityId  String?
+  oldData   Json?
+  newData   Json?
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+
+  admin Admin @relation(fields: [adminId], references: [id])
+
+  @@index([adminId])
+  @@index([createdAt])
+  @@index([entity, entityId])
+  @@map("audit_logs")
+}
+
+// ─────────────────────────────────────────────
+// SETTINGS
+// ─────────────────────────────────────────────
+
+model Setting {
+  key       String   @id
+  value     String
+  type      String   @default("string")
+  group     String   @default("general")
+  updatedAt DateTime @updatedAt
+
+  @@index([group])
+  @@map("settings")
+}

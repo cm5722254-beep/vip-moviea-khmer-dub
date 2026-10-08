@@ -1,0 +1,173 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Khmer:wght@300;400;500;600;700&family=Noto+Serif+Khmer:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --cinema-bg: #0a0a0f;
+    --cinema-secondary: #12121a;
+    --cinema-card: #1a1a24;
+    --gold-500: #d4af37;
+    --gold-400: #f5c842;
+    --gold-glow: rgba(212, 175, 55, 0.3);
+  }
+
+  * {
+    -webkit-tap-highlight-color: transparent;
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--cinema-bg);
+    color: white;
+    font-family: 'Noto Sans Khmer', 'Inter', system-ui, sans-serif;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Dark scrollbar */
+  ::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 100px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+
+  /* iOS overscroll */
+  html, body {
+    overscroll-behavior: none;
+  }
+
+  /* Input autofill dark */
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus {
+    -webkit-box-shadow: 0 0 0 1000px #1a1a24 inset !important;
+    -webkit-text-fill-color: white !important;
+    caret-color: white;
+  }
+}
+
+@layer components {
+  .font-khmer {
+    font-family: 'Noto Sans Khmer', 'Noto Serif Khmer', sans-serif;
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  .card-cinema {
+    background-color: var(--cinema-card);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 1rem;
+  }
+
+  .text-gradient-gold {
+    background: linear-gradient(135deg, #d4af37 0%, #f5c842 50%, #d4af37 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .gold-glow {
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+  }
+
+  .safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  .safe-area-top {
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+
+  /* Page container with bottom nav clearance */
+  .page-container {
+    min-height: 100dvh;
+    padding-bottom: calc(4rem + env(safe-area-inset-bottom, 0px));
+    background-color: var(--cinema-bg);
+  }
+
+  /* Glass morphism */
+  .glass {
+    background: rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+}
+
+@layer utilities {
+  /* Skeleton animation */
+  @keyframes skeleton {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+
+  /* Slide up animation */
+  @keyframes slide-up {
+    from { transform: translateY(100%); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+
+  .animate-slide-up {
+    animation: slide-up 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Fade in up */
+  @keyframes fade-in-up {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+
+  .animate-fade-in-up {
+    animation: fade-in-up 0.5s ease-out;
+  }
+
+  /* Gold pulse */
+  @keyframes pulse-gold {
+    0%, 100% { opacity: 1; box-shadow: 0 0 8px rgba(212, 175, 55, 0.6); }
+    50% { opacity: 0.7; box-shadow: 0 0 16px rgba(212, 175, 55, 0.8); }
+  }
+
+  .animate-pulse-gold {
+    animation: pulse-gold 2s ease-in-out infinite;
+  }
+
+  /* Shimmer */
+  @keyframes shimmer {
+    0% { background-position: -200% center; }
+    100% { background-position: 200% center; }
+  }
+
+  .animate-shimmer {
+    background: linear-gradient(
+      90deg,
+      rgba(255,255,255,0.03) 25%,
+      rgba(255,255,255,0.08) 50%,
+      rgba(255,255,255,0.03) 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+  }
+}
